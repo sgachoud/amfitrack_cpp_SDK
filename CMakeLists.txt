@@ -21,6 +21,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/lib_generic_parameter)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/lib_macro)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/lib_queue)
 
+# Set output directory
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/output)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/output)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/output)
+
 # Source files
 set(SOURCES
     AmfitrackDevices.cpp
