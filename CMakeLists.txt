@@ -28,7 +28,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/output)
 
 # Source files
 set(SOURCES
-    AmfitrackDevices.cpp
+    Amfitrack.cpp
     src/AmfitrackNode.cpp
     src/usb_connection.cpp
     lib/amfiprotapi/lib_AmfiProt.cpp
@@ -41,7 +41,7 @@ set(SOURCES
 
 # Header files
 set(HEADERS
-    AmfitrackDevices.hpp
+    Amfitrack.hpp
     src/AmfitrackNode.h
     src/usb_connection.h
     src/project_conf.h

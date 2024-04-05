@@ -48,12 +48,12 @@
 //-----------------------------------------------------------------------------
 // Variables and constants
 //-----------------------------------------------------------------------------
-class AMFITRACK_Devices
+class AMFITRACK
 {
 public:
-	static AMFITRACK_Devices& getInstance()
+	static AMFITRACK& getInstance()
 	{
-		static AMFITRACK_Devices instance;
+		static AMFITRACK instance;
 		return instance;
 	}
 
@@ -75,10 +75,10 @@ private:
 	uint8_t FieldQualityPose[MAX_NUMBER_OF_DEVICES];
 
 
-	static void background_amfitrack_task(AMFITRACK_Devices*);
+	static void background_amfitrack_task(AMFITRACK*);
 
-	AMFITRACK_Devices();
-	~AMFITRACK_Devices();
+	AMFITRACK();
+	~AMFITRACK();
 	
 };
 

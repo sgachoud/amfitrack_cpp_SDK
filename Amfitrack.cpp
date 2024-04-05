@@ -3,17 +3,17 @@
 #include <string>
 #include <ctime>
 #include "lib_AmfiProt_API.hpp"
-#include "AmfitrackDevices.hpp"
+#include "Amfitrack.hpp"
 #include "src/usb_connection.h"
 #include <process.h>
 
 using namespace std;
 
-//#define AMFITRACK_Devices_DEBUG_INFO
+//#define AMFITRACK_DEBUG_INFO
 
 static bool stop_running = false;
 
-AMFITRACK_Devices::AMFITRACK_Devices()
+AMFITRACK::AMFITRACK()
 {
     // Initialize Name with null characters
     for (int i = 0; i < MAX_NUMBER_OF_DEVICES; i++)
@@ -25,20 +25,20 @@ AMFITRACK_Devices::AMFITRACK_Devices()
 }
 
 
-AMFITRACK_Devices::~AMFITRACK_Devices()
+AMFITRACK::~AMFITRACK()
 {
 
 }
 
-void AMFITRACK_Devices::background_amfitrack_task(AMFITRACK_Devices* inst)
+void AMFITRACK::background_amfitrack_task(AMFITRACK* inst)
 {
     /* Creates instance of USB */
     usb_connection& usb = usb_connection::getInstance();
     AmfiProt_API& amfiprot_api = AmfiProt_API::getInstance();
 
-#ifdef AMFITRACK_Devices_DEBUG_INFO
+#ifdef AMFITRACK_DEBUG_INFO
     std::cout << "Background thread started!" << std::endl;
-#endif // AMFITRACK_Devices_DEBUG_INFO
+#endif // AMFITRACK_DEBUG_INFO
 
     while (!stop_running)
     {
@@ -50,13 +50,13 @@ void AMFITRACK_Devices::background_amfitrack_task(AMFITRACK_Devices* inst)
 }
 
 
-void AMFITRACK_Devices::start_amfitrack_task(void)
+void AMFITRACK::start_amfitrack_task(void)
 {
     stop_running = false;
 
-#ifdef AMFITRACK_Devices_DEBUG_INFO
+#ifdef AMFITRACK_DEBUG_INFO
     std::cout << "Starting Background thread!" << std::endl;
-#endif // AMFITRACK_Devices_DEBUG_INFO
+#endif // AMFITRACK_DEBUG_INFO
     
     // Create a thread object
     std::thread background_thread(background_amfitrack_task, this);
@@ -64,12 +64,12 @@ void AMFITRACK_Devices::start_amfitrack_task(void)
     background_thread.detach();
 }
 
-void AMFITRACK_Devices::stop_amfitrack_task(void)
+void AMFITRACK::stop_amfitrack_task(void)
 {
     stop_running = true;
 }
 
-void AMFITRACK_Devices::initialize_amfitrack(void)
+void AMFITRACK::initialize_amfitrack(void)
 {
     usb_connection& usb = usb_connection::getInstance();
     AmfiProt_API& amfiprot_api = AmfiProt_API::getInstance();
@@ -77,7 +77,7 @@ void AMFITRACK_Devices::initialize_amfitrack(void)
     usb.usb_init();
 }
 
-void AMFITRACK_Devices::setDeviceName(uint8_t DeviceID, char* name, uint8_t length)
+void AMFITRACK::setDeviceName(uint8_t DeviceID, char* name, uint8_t length)
 {
     // Check for valid device ID and name length
     if (length >= MAX_NAME_LENGTH) return;
@@ -87,36 +87,36 @@ void AMFITRACK_Devices::setDeviceName(uint8_t DeviceID, char* name, uint8_t leng
     }
     Name[DeviceID][length] = '\0'; // Ensure null termination
     
-#ifdef AMFITRACK_Devices_DEBUG_INFO
+#ifdef AMFITRACK_DEBUG_INFO
     std::cout << Name[DeviceID] << std::endl;
-#endif // AMFITRACK_Devices_DEBUG_INFO
+#endif // AMFITRACK_DEBUG_INFO
 }
 
-void AMFITRACK_Devices::setDeviceActive(uint8_t DeviceID)
+void AMFITRACK::setDeviceActive(uint8_t DeviceID)
 {
     DeviceActive[DeviceID] = true;
-#ifdef AMFITRACK_Devices_DEBUG_INFO
+#ifdef AMFITRACK_DEBUG_INFO
     std::cout << "Device " << DeviceID << " is active" << std::endl;
-#endif // AMFITRACK_Devices_DEBUG_INFO
+#endif // AMFITRACK_DEBUG_INFO
     
 }
 
-bool AMFITRACK_Devices::getDeviceActive(uint8_t DeviceID)
+bool AMFITRACK::getDeviceActive(uint8_t DeviceID)
 {
     return DeviceActive[DeviceID];
 }
 
-void AMFITRACK_Devices::setDevicePose(uint8_t DeviceID, lib_AmfiProt_Amfitrack_Pose_t Pose)
+void AMFITRACK::setDevicePose(uint8_t DeviceID, lib_AmfiProt_Amfitrack_Pose_t Pose)
 {
     memcpy(&Position[DeviceID], &Pose, sizeof(lib_AmfiProt_Amfitrack_Pose_t));
-#ifdef AMFITRACK_Devices_DEBUG_INFO
+#ifdef AMFITRACK_DEBUG_INFO
     std::cout << "Pose set!" << std::endl;
     //printf("Pose X %.3f | Y %.3f | Z %.3f \n", this->Pose[DeviceID].position_x_in_m, this->Pose[DeviceID].position_y_in_m, this->Pose[DeviceID].position_z_in_m);
-#endif // AMFITRACK_Devices_DEBUG_INFO
+#endif // AMFITRACK_DEBUG_INFO
     
 }
 
-void AMFITRACK_Devices::getDevicePose(uint8_t DeviceID, lib_AmfiProt_Amfitrack_Pose_t* Pose)
+void AMFITRACK::getDevicePose(uint8_t DeviceID, lib_AmfiProt_Amfitrack_Pose_t* Pose)
 {
     if (!getDeviceActive(DeviceID)) return;
     memcpy(Pose, &Position[DeviceID], sizeof(lib_AmfiProt_Amfitrack_Pose_t));
@@ -135,7 +135,7 @@ void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SourceMeasurement(void* handle,
 
 void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SensorMeasurement(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
 {
-    AMFITRACK_Devices& AMFITRACK_Devices = AMFITRACK_Devices::getInstance();
+    AMFITRACK& AMFITRACK_Devices = AMFITRACK::getInstance();
     lib_AmfiProt_Amfitrack_Sensor_Measurement_t SensorMeasurement;
     memcpy(&SensorMeasurement, &frame->payload[0], sizeof(lib_AmfiProt_Amfitrack_Sensor_Measurement_t));
     lib_AmfiProt_Amfitrack_Pose_t tempPose;
@@ -221,8 +221,8 @@ void AmfiProt_API::libAmfiProt_handle_RequestDeviceID(void* handle, lib_AmfiProt
 
 void AmfiProt_API::libAmfiProt_handle_RespondDeviceID(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
 {
-    AMFITRACK_Devices& AMFITRACK_Devices = AMFITRACK_Devices::getInstance();
-    AMFITRACK_Devices.setDeviceActive(frame->payload[1]);
+    AMFITRACK& AMFITRACK = AMFITRACK::getInstance();
+    AMFITRACK.setDeviceActive(frame->payload[1]);
 }
 
 void AmfiProt_API::libAmfiProt_handle_SetTxID(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
@@ -262,9 +262,9 @@ void AmfiProt_API::libAmfiProt_handle_RequestDeviceName(void* handle, lib_AmfiPr
 
 void AmfiProt_API::libAmfiProt_handle_ReplyDeviceName(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
 {
-    AMFITRACK_Devices& AMFITRACK_Devices = AMFITRACK_Devices::getInstance();
+    AMFITRACK& AMFITRACK = AMFITRACK::getInstance();
     size_t str_length = strnlen((char*)(&(frame->payload[1])), MAX_PAYLOAD_SIZE - 1);
-    AMFITRACK_Devices.setDeviceName(frame->header.destination, (char*)(&(frame->payload[1])), str_length);
+    AMFITRACK.setDeviceName(frame->header.destination, (char*)(&(frame->payload[1])), str_length);
 }
 
 void AmfiProt_API::libAmfiProt_handle_RequestConfigurationValue(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
