@@ -135,12 +135,12 @@ void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SourceMeasurement(void* handle,
 
 void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SensorMeasurement(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
 {
-    AMFITRACK& AMFITRACK_Devices = AMFITRACK::getInstance();
+    AMFITRACK& AMFITRACK = AMFITRACK::getInstance();
     lib_AmfiProt_Amfitrack_Sensor_Measurement_t SensorMeasurement;
     memcpy(&SensorMeasurement, &frame->payload[0], sizeof(lib_AmfiProt_Amfitrack_Sensor_Measurement_t));
     lib_AmfiProt_Amfitrack_Pose_t tempPose;
     lib_AmfiProt_Amfitrack_decode_pose_i24(&SensorMeasurement.pose, &tempPose);
-    AMFITRACK_Devices.setDevicePose(frame->header.source, tempPose);
+    AMFITRACK.setDevicePose(frame->header.source, tempPose);
 }
 
 void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_RawBfield(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
