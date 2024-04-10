@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdint>
 #include <fstream>
 #include <string>
 #include <ctime>
@@ -6,8 +7,6 @@
 #include "Amfitrack.hpp"
 #include "src/usb_connection.h"
 #include <process.h>
-
-using namespace std;
 
 //#define AMFITRACK_DEBUG_INFO
 
@@ -35,6 +34,7 @@ void AMFITRACK::background_amfitrack_task(AMFITRACK* inst)
     /* Creates instance of USB */
     usb_connection& usb = usb_connection::getInstance();
     AmfiProt_API& amfiprot_api = AmfiProt_API::getInstance();
+    AMFITRACK& AMFITRACK = AMFITRACK::getInstance();
 
 #ifdef AMFITRACK_DEBUG_INFO
     std::cout << "Background thread started!" << std::endl;
@@ -44,6 +44,14 @@ void AMFITRACK::background_amfitrack_task(AMFITRACK* inst)
     {
         usb.usb_run();
         amfiprot_api.amfiprot_run();
+
+        for (uint8_t devices = 0; devices < MAX_NUMBER_OF_DEVICES; devices++)
+        {
+            if (AMFITRACK.getDeviceActive(devices))
+            {
+                AMFITRACK.checkDeviceDisconnected(devices);
+            }
+        }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
@@ -92,9 +100,23 @@ void AMFITRACK::setDeviceName(uint8_t DeviceID, char* name, uint8_t length)
 #endif // AMFITRACK_DEBUG_INFO
 }
 
+void AMFITRACK::checkDeviceDisconnected(uint8_t DeviceID)
+{
+    time_t CurrentTime = time(0);
+
+    if (difftime(CurrentTime, DeviceLastTimeSeen[DeviceID]) > 5.0)
+    {
+        DeviceActive[DeviceID] = false;
+        std::cout << "Device " << std::dec << static_cast<unsigned>(DeviceID) << " disconnected" << std::endl;
+    }
+
+}
+
 void AMFITRACK::setDeviceActive(uint8_t DeviceID)
 {
+    if (!DeviceActive[DeviceID]) std::cout << "Device " << std::dec << static_cast<unsigned>(DeviceID) << " connected" << std::endl;
     DeviceActive[DeviceID] = true;
+    DeviceLastTimeSeen[DeviceID] = time(0);
 #ifdef AMFITRACK_DEBUG_INFO
     std::cout << "Device " << DeviceID << " is active" << std::endl;
 #endif // AMFITRACK_DEBUG_INFO
@@ -125,12 +147,14 @@ void AMFITRACK::getDevicePose(uint8_t DeviceID, lib_AmfiProt_Amfitrack_Pose_t* P
 
 void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SourceCalibration(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
 {
-    /* NOTE: Overwrite in application-specific library */
+    AMFITRACK& AMFITRACK = AMFITRACK::getInstance();
+    AMFITRACK.setDeviceActive(frame->header.source);
 }
 
 void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SourceMeasurement(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
 {
-    /* NOTE: Overwrite in application-specific library */
+    AMFITRACK& AMFITRACK = AMFITRACK::getInstance();
+    AMFITRACK.setDeviceActive(frame->header.source);
 }
 
 void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SensorMeasurement(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
@@ -141,6 +165,7 @@ void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SensorMeasurement(void* handle,
     lib_AmfiProt_Amfitrack_Pose_t tempPose;
     lib_AmfiProt_Amfitrack_decode_pose_i24(&SensorMeasurement.pose, &tempPose);
     AMFITRACK.setDevicePose(frame->header.source, tempPose);
+    AMFITRACK.setDeviceActive(frame->header.source);
 }
 
 void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_RawBfield(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
@@ -222,7 +247,7 @@ void AmfiProt_API::libAmfiProt_handle_RequestDeviceID(void* handle, lib_AmfiProt
 void AmfiProt_API::libAmfiProt_handle_RespondDeviceID(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
 {
     AMFITRACK& AMFITRACK = AMFITRACK::getInstance();
-    AMFITRACK.setDeviceActive(frame->payload[1]);
+    AMFITRACK.setDeviceActive(frame->header.source);
 }
 
 void AmfiProt_API::libAmfiProt_handle_SetTxID(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)

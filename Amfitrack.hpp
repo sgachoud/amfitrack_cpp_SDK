@@ -57,29 +57,38 @@ public:
 		return instance;
 	}
 
+	/* Call first to initialize USB and connect to devices */
 	void initialize_amfitrack(void);
+
+	/* Starts the main thread, that reads data from all connected devices */
 	void start_amfitrack_task(void);
+
+	/* Stops the main thread */
 	void stop_amfitrack_task(void);
 
 	void setDeviceName(uint8_t DeviceID, char* name, uint8_t length);
+
 	void setDeviceActive(uint8_t DeviceID);
+	/* Return if a device is connected */
 	bool getDeviceActive(uint8_t DeviceID);
+
 	void setDevicePose(uint8_t DeviceID, lib_AmfiProt_Amfitrack_Pose_t Pose);
+	/* Get the pose for a specific device */
 	void getDevicePose(uint8_t DeviceID, lib_AmfiProt_Amfitrack_Pose_t* Pose);
 
 private:
 	char Name[MAX_NUMBER_OF_DEVICES][MAX_NAME_LENGTH]; // Array of character arrays to store device names
 	bool DeviceActive[MAX_NUMBER_OF_DEVICES];
+	time_t DeviceLastTimeSeen[MAX_NUMBER_OF_DEVICES];
 
 	lib_AmfiProt_Amfitrack_Pose_t Position[MAX_NUMBER_OF_DEVICES];
-	uint8_t FieldQualityPose[MAX_NUMBER_OF_DEVICES];
 
 
 	static void background_amfitrack_task(AMFITRACK*);
+	void checkDeviceDisconnected(uint8_t DeviceID);
 
 	AMFITRACK();
 	~AMFITRACK();
-	
 };
 
 

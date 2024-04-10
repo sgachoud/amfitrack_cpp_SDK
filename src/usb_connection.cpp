@@ -95,7 +95,9 @@ bool usb_connection::usb_connect_device(uint16_t vid, uint16_t pid)
 
 	if (!devs)
 	{
+#ifdef usb_connection_DEBUG_INFO
 		std::cout << "Could not find any devices matching VID: " << std::hex << vid << " and PID: " << std::hex << pid << std::endl;
+#endif
 	}
 	else
 	{
