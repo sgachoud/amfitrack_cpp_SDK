@@ -13,3 +13,6 @@ This is a code snippet of how the AMFITRACK C++ SDK is started
     AMFITRACK.start_amfitrack_task();
 
 
+## Tested with:
+
+- MSVC Compiler (Version 14.37)
