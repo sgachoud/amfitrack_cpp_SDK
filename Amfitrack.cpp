@@ -10,6 +10,10 @@
 
 //#define AMFITRACK_DEBUG_INFO
 
+#ifdef _MSC_VER
+#define USE_THREAD_BASED
+#endif
+
 static bool stop_running = false;
 
 AMFITRACK::AMFITRACK()
@@ -19,7 +23,14 @@ AMFITRACK::AMFITRACK()
     {
         memset(Name[i], 0, MAX_NAME_LENGTH);
         DeviceActive[i] = false;
-        Position[i] = { .position_x_in_m = 0, .position_y_in_m = 0, .position_z_in_m = 0, .orientation_x = 0, .orientation_y = 0, .orientation_z = 0, .orientation_w = 0 };
+        Position[i].position_x_in_m = 0;
+        Position[i].position_y_in_m = 0;
+        Position[i].position_z_in_m = 0;
+
+        Position[i].orientation_x = 0;
+        Position[i].orientation_y = 0;
+        Position[i].orientation_z = 0;
+        Position[i].orientation_w = 0;
     }
 }
 
@@ -29,8 +40,10 @@ AMFITRACK::~AMFITRACK()
 
 }
 
+
 void AMFITRACK::background_amfitrack_task(AMFITRACK* inst)
 {
+#if defined(USE_THREAD_BASED)
     /* Creates instance of USB */
     usb_connection& usb = usb_connection::getInstance();
     AmfiProt_API& amfiprot_api = AmfiProt_API::getInstance();
@@ -55,11 +68,13 @@ void AMFITRACK::background_amfitrack_task(AMFITRACK* inst)
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
+#endif
 }
 
 
 void AMFITRACK::start_amfitrack_task(void)
 {
+#if defined(USE_THREAD_BASED)
     stop_running = false;
 
 #ifdef AMFITRACK_DEBUG_INFO
@@ -70,11 +85,32 @@ void AMFITRACK::start_amfitrack_task(void)
     std::thread background_thread(background_amfitrack_task, this);
 
     background_thread.detach();
+#endif
 }
 
 void AMFITRACK::stop_amfitrack_task(void)
 {
     stop_running = true;
+}
+
+
+void AMFITRACK::amfitrack_main_loop(void)
+{
+    /* Creates instance of USB */
+    usb_connection& usb = usb_connection::getInstance();
+    AmfiProt_API& amfiprot_api = AmfiProt_API::getInstance();
+    AMFITRACK& AMFITRACK = AMFITRACK::getInstance();
+
+    usb.usb_run();
+    amfiprot_api.amfiprot_run();
+
+    for (uint8_t devices = 0; devices < MAX_NUMBER_OF_DEVICES; devices++)
+    {
+        if (AMFITRACK.getDeviceActive(devices))
+        {
+            AMFITRACK.checkDeviceDisconnected(devices);
+        }
+    }
 }
 
 void AMFITRACK::initialize_amfitrack(void)

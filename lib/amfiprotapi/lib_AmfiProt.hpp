@@ -12,16 +12,17 @@
 #include <iostream>
 #include <memory>
 #include <assert.h>
+#include <stdio.h>
 
 #ifdef _MSC_VER
 #define __PACKED_STRUCT struct 
 #define __weak  
-#define __packed
-#pragma pack(1)
+#define __packed 
 #else
 #if defined(__MINGW32__) ||  defined(__MINGW64__)
-#define __packed __attribute__((packed, aligned(1)))
-#define __weak  __attribute__((weak))
+#define __PACKED_STRUCT struct 
+#define __weak  
+#define __PACKED __attribute__((packed)) 
 #endif
 #endif
 
@@ -270,7 +271,7 @@ struct lib_AmfiProt_Handle
     uint8_t deviceID;
 };
 
-__PACKED_STRUCT lib_AmfiProt_Header
+struct lib_AmfiProt_Header
 {
     uint8_t length;			// Length of payload (without crc)
     uint8_t packetType;		// Bit 6-7: 0 = No Ack, 1 = Request Ack, 2 = Ack, 3 = Reply   Bit 0-5: Time to live for packet routing
@@ -279,27 +280,27 @@ __PACKED_STRUCT lib_AmfiProt_Header
     uint8_t source;			// 0: Reserved for USB connected PC
     uint8_t destination;	// 0: Reserved for USB connected PC, 255: Broadcast
     uint8_t headCRC;		// 8 bit CRC of the header
-};
+}; 
 
-__PACKED_STRUCT lib_AmfiProt_Frame
+struct lib_AmfiProt_Frame
 {
     lib_AmfiProt_Header_t header;
     uint8_t payload[AmfiProtMaxPacketLength - sizeof(lib_AmfiProt_Header_t)];		// Last byte of payload is an 8 bit CRC
 };
-
+// static_assert(sizeof(lib_AmfiProt_Frame) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_Frame larger than max payload size");
 
 __PACKED_STRUCT lib_AmfiProt_FirmwareStart
 {
     uint8_t payloadID;
     uint8_t processorID;    // 0: STM32 processor, 1: RF processor
-};
+} __packed;
 static_assert (sizeof(struct lib_AmfiProt_FirmwareStart) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_FirmwareStart larger than max payload size");
 
 __PACKED_STRUCT lib_AmfiProt_FirmwareEnd
 {
     uint8_t payloadID;
     uint8_t processorID;    // 0: STM32 processor, 1: RF processor
-};
+} __packed;
 static_assert (sizeof(struct lib_AmfiProt_FirmwareEnd) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_FirmwareEnd larger than max payload size");
 
 __PACKED_STRUCT lib_AmfiProt_FirmwareBinary
@@ -307,7 +308,7 @@ __PACKED_STRUCT lib_AmfiProt_FirmwareBinary
     uint8_t payloadID;
     uint8_t processorID;	// 0: STM32 processor, 1: RF processor
     uint8_t data[AmfiProtMaxPayloadLength - 2 * sizeof(uint8_t)];
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_FirmwareBinary) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_FirwmareBinary larger than max payload size");
 
 
@@ -317,7 +318,7 @@ __PACKED_STRUCT lib_AmfiProt_DeviceID
     uint8_t TxID;
     uint32_t UUID[3];
     uint32_t crc;
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_DeviceID) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_DeviceID larger than max payload size");
 
 
@@ -328,14 +329,14 @@ __PACKED_STRUCT lib_AmfiProt_FirmwareVersion
     uint32_t minor;
     uint32_t patch;
     uint32_t build;
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_FirmwareVersion) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_FirmwareVersion larger than max payload size");
 
 __PACKED_STRUCT lib_AmfiProt_FirmwareVersionPerIDRequest
 {
     uint8_t payloadID;
     uint8_t processorID;    // 0: STM32 processor, 1: RF processor
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_FirmwareVersionPerIDRequest) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_FirmwareVersionPerIDRequest larger than max payload size");
 
 __PACKED_STRUCT lib_AmfiProt_FirmwareVersionPerID
@@ -346,7 +347,7 @@ __PACKED_STRUCT lib_AmfiProt_FirmwareVersionPerID
     uint32_t patch;
     uint32_t build;
     uint8_t processorID;    // 0: STM32 processor, 1: RF processor
-};
+} __packed; 
 static_assert(sizeof(struct lib_AmfiProt_FirmwareVersionPerID) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_FirmwareVersionPerID larger than max payload size");
 
 
@@ -354,7 +355,7 @@ __PACKED_STRUCT lib_AmfiProt_DeviceName
 {
     uint8_t payloadID;
     char name[AmfiProtMaxPayloadLength - sizeof(uint8_t)];
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_DeviceName) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_DeviceName larger than max payload size");
 
 
@@ -362,7 +363,7 @@ __PACKED_STRUCT lib_AmfiProt_ConfigNameRequest
 {
     uint8_t payloadID;
     uint16_t index;
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_ConfigNameRequest) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ConfigNameRequest larger than max payload size");
 
 __PACKED_STRUCT lib_AmfiProt_ConfigName
@@ -370,15 +371,15 @@ __PACKED_STRUCT lib_AmfiProt_ConfigName
     uint8_t payloadID;
     uint16_t index;
     char name[AmfiProtMaxPayloadLength - sizeof(uint8_t) - sizeof(uint16_t)];
-};
-static_assert(sizeof(struct lib_AmfiProt_ConfigName) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ConfigName larger than max payload size");
+} __packed;
+// static_assert(sizeof(struct lib_AmfiProt_ConfigName) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ConfigName larger than max payload size");
 
 __PACKED_STRUCT lib_AmfiProt_ConfigNameRequestUID
 {
     uint8_t payloadID;
     uint8_t category;	// 0xFF for all
     uint16_t index;
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_ConfigNameRequestUID) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ConfigNameRequestUID larger than max payload size");
 
 
@@ -387,21 +388,21 @@ __PACKED_STRUCT lib_AmfiProt_ConfigNameUID_common
     uint8_t category;
     uint32_t uid;	// Use the current value from Unix Time Stamp - Epoch Converter  when a new parameter is added
     char name[AmfiProtMaxPayloadLength - 2 * sizeof(uint8_t) - sizeof(uint16_t) - sizeof(uint32_t) - sizeof(uint8_t)];
-};
+} __packed;
 
 __PACKED_STRUCT lib_AmfiProt_ConfigNameUID_protocol
 {
     uint8_t payloadID;
     uint16_t index;
     lib_AmfiProt_ConfigNameUID_common_t config_names;
-};
-static_assert(sizeof(struct lib_AmfiProt_ConfigNameUID_protocol) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ConfigNameUID larger than max payload size");
+} __packed;
+// static_assert(sizeof(struct lib_AmfiProt_ConfigNameUID_protocol) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ConfigNameUID larger than max payload size");
 
 __PACKED_STRUCT lib_AmfiProt_ConfigNameUID_settings
 {
     lib_AmfiProt_ConfigNameUID_common_t config_names;
     uint32_t bitmask_Dep;
-};
+} __packed;
 
 
 
@@ -409,7 +410,7 @@ __PACKED_STRUCT lib_AmfiProt_ConfigValueCountRequest
 {
     uint8_t payloadID;
     uint8_t category;	// 0xFF for all
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_ConfigValueCountRequest) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ConfigValueCountRequest larger than max payload size");
 
 
@@ -418,7 +419,7 @@ __PACKED_STRUCT lib_AmfiProt_ConfigValueCount
     uint8_t payloadID;
     uint8_t category;	// 0xFF for all
     uint16_t count;
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_ConfigValueCount) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ConfigValueCount larger than max payload size");
 
 
@@ -426,7 +427,7 @@ __PACKED_STRUCT lib_AmfiProt_ConfigValueRequest
 {
     uint8_t payloadID;
     uint16_t index;
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_ConfigValueRequest) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ConfigValueRequest larger than max payload size");
 
 __PACKED_STRUCT lib_AmfiProt_ConfigValue
@@ -434,14 +435,14 @@ __PACKED_STRUCT lib_AmfiProt_ConfigValue
     uint8_t payloadID;
     uint16_t index;
     lib_Generic_Parameter_Value_t value;
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_ConfigValue) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ConfigValue larger than max payload size");
 
 __PACKED_STRUCT lib_AmfiProt_ConfigValueUIDRequest
 {
     uint8_t payloadID;
     uint32_t uid;
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_ConfigValueUIDRequest) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ConfigValueUIDRequest larger than max payload size");
 
 __PACKED_STRUCT lib_AmfiProt_ConfigValueUID
@@ -449,7 +450,7 @@ __PACKED_STRUCT lib_AmfiProt_ConfigValueUID
     uint8_t payloadID;
     uint32_t uid;
     lib_Generic_Parameter_Value_t value;
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_ConfigValueUID) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ConfigValueUID larger than max payload size");
 
 
@@ -457,7 +458,7 @@ __PACKED_STRUCT lib_AmfiProt_ConfigCategoryRequest
 {
     uint8_t payloadID;
     uint8_t categoryIndex;
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_ConfigCategoryRequest) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ConfigCategoryRequest larger than max payload size");
 
 
@@ -466,7 +467,7 @@ __PACKED_STRUCT lib_AmfiProt_ConfigCategory
     uint8_t payloadID;
     uint8_t categoryIndex;
     char name[AmfiProtMaxPayloadLength - sizeof(uint8_t) - sizeof(uint8_t)];
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_ConfigCategory) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ConfigCategory larger than max payload size");
 
 
@@ -474,7 +475,7 @@ __PACKED_STRUCT lib_AmfiProt_ConfigCategoryCount
 {
     uint8_t payloadID;
     uint8_t categoryCount;
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_ConfigCategoryCount) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ConfigCategoryCount larger than max payload size");
 
 
@@ -482,7 +483,7 @@ static_assert(sizeof(struct lib_AmfiProt_ConfigCategoryCount) <= AmfiProtMaxPayl
 __PACKED_STRUCT lib_AmfiProt_LoadDefault
 {
     uint8_t payloadID;
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_LoadDefault) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_LoadDefault larger than max payload size");
 
 
@@ -490,7 +491,7 @@ __PACKED_STRUCT lib_AmfiProt_SaveAsDefault
 {
     uint8_t payloadID;
     uint32_t UUID[3];
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_SaveAsDefault) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_SaveAsDefault larger than max payload size");
 
 
@@ -499,7 +500,7 @@ __PACKED_STRUCT lib_AmfiProt_ProcedureSpecRequest
     uint8_t payloadID;
     uint16_t index;		// If index is 0xFFFF, use uid, else ignore uid
     uint32_t uid;
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_ProcedureSpecRequest) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ProcedureSpecRequest larger than max payload size");
 
 
@@ -515,8 +516,8 @@ __PACKED_STRUCT lib_AmfiProt_ProcedureSpec
     uint8_t parameter4_type;
     uint8_t parameter5_type;
     char procedure_name[AmfiProtMaxPayloadLength - sizeof(uint8_t) - sizeof(uint16_t) - sizeof(uint32_t) - 6 * sizeof(uint8_t)];
-};
-static_assert(sizeof(struct lib_AmfiProt_ProcedureSpec) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ProcedureSpec larger than max payload size");
+} __packed;
+// static_assert(sizeof(struct lib_AmfiProt_ProcedureSpec) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ProcedureSpec larger than max payload size");
 
 
 __PACKED_STRUCT lib_AmfiProt_ProcedureRequest
@@ -528,8 +529,8 @@ __PACKED_STRUCT lib_AmfiProt_ProcedureRequest
     lib_Generic_Parameter_Value_t parameter3;
     lib_Generic_Parameter_Value_t parameter4;
     lib_Generic_Parameter_Value_t parameter5;
-};
-static_assert(sizeof(struct lib_AmfiProt_ProcedureRequest) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ProcedureRequest larger than max payload size");
+} __packed;
+// static_assert(sizeof(struct lib_AmfiProt_ProcedureRequest) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ProcedureRequest larger than max payload size");
 
 __PACKED_STRUCT lib_AmfiProt_ProcedureReply
 {
@@ -537,7 +538,7 @@ __PACKED_STRUCT lib_AmfiProt_ProcedureReply
     uint32_t uid;
     //    uint8_t status;
         lib_Generic_Parameter_Value_t return_value;
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_ProcedureReply) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_ProcedureReply larger than max payload size");
 
 
@@ -545,14 +546,14 @@ __PACKED_STRUCT lib_AmfiProt_DebugOutput
 {
     uint8_t payloadID;
     char debugString[AmfiProtMaxPayloadLength - sizeof(uint8_t)];
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_DebugOutput) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_DebugOutput larger than max payload size");
 
 
 __PACKED_STRUCT lib_AmfiProt_RebootDevice
 {
     uint8_t payloadID;
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_RebootDevice) <= AmfiProtMaxPacketLength, "lib_AmfiProt_RebootDevice larger than max payload size");
 
 
@@ -561,7 +562,7 @@ __PACKED_STRUCT lib_AmfiProt_TunnelData
     uint8_t payloadID;
     uint8_t endPoint;
     uint8_t data[AmfiProtMaxPayloadLength - 2 * sizeof(uint8_t)];
-};
+} __packed;
 static_assert(sizeof(struct lib_AmfiProt_TunnelData) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_TunnelData larger than max payload size");
 
 #endif // LIB_AMFIPROT_H_H

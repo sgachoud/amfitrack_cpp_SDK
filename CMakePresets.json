@@ -18,6 +18,17 @@
             }
         },
         {
+            "name": "ninja-gcc",
+            "hidden": false,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "YES"
+            }
+        },
+        {
           "name": "x64-debug",
           "displayName": "x64 Debug",
           "inherits": "windows-base",

@@ -66,6 +66,8 @@ public:
 	/* Stops the main thread */
 	void stop_amfitrack_task(void);
 
+    void amfitrack_main_loop(void);
+
 	void setDeviceName(uint8_t DeviceID, char* name, uint8_t length);
 
 	void setDeviceActive(uint8_t DeviceID);

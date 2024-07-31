@@ -3,12 +3,6 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-# Enable Hot Reload for MSVC compilers if supported.
-if (POLICY CMP0141)
-  cmake_policy(SET CMP0141 NEW)
-  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
-endif()
-
 project ("Amfitrack_API")
 
 # Include directories
@@ -21,10 +15,33 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/lib_generic_parameter)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/lib_macro)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/lib_queue)
 
+# Compiler-specific options
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        # 64-bit
+        set(OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/output/MSVC/x64)
+        set(HIDAPI_LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/hidapi/x64)
+    else()
+        # 32-bit
+        set(OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/output/MSVC/x86)
+        set(HIDAPI_LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/hidapi/x86)
+    endif()
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        # 64-bit
+        set(OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/output/GCC/x64)
+        set(HIDAPI_LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/hidapi/x64)
+    else()
+        # 32-bit
+        set(OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/output/GCC/x86)
+        set(HIDAPI_LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/hidapi/x86)
+    endif()
+endif()
+
 # Set output directory
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/output)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/output)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/output)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_PATH})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_PATH})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_PATH})
 
 # Source files
 set(SOURCES
@@ -58,11 +75,43 @@ set(HEADERS
 # Add library
 add_library(Amfitrack_API ${SOURCES} ${HEADERS})
 
-# Link against the library
-target_link_libraries(Amfitrack_API ${CMAKE_CURRENT_SOURCE_DIR}/lib/hidapi/hidapi.lib)
+# Determine architecture and set hidapi paths
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    # 64-bit
+    set(HIDAPI_LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/hidapi/x64)
+else()
+    # 32-bit
+    set(HIDAPI_LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/hidapi/x86)
+endif()
+
+find_library(HIDAPI_LIB NAMES hidapi PATHS ${HIDAPI_LIB_PATH})
+
+if (NOT HIDAPI_LIB)
+    message(FATAL_ERROR "hidapi library not found in ${HIDAPI_LIB_PATH}")
+else()
+    message(STATUS "hidapi library found at: ${HIDAPI_LIB}")
+endif()
+
+# Link against the hidapi library
+target_link_libraries(Amfitrack_API PRIVATE ${HIDAPI_LIB})
+
+# Add custom command to copy DLL to output directory
+add_custom_command(TARGET Amfitrack_API POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${HIDAPI_LIB_PATH}/hidapi.dll
+    $<TARGET_FILE_DIR:Amfitrack_API>
+    COMMENT "Copying hidapi.dll to the output directory"
+)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Amfitrack_API PROPERTY CXX_STANDARD 20)
 endif()
 
-# TODO: Add tests and install targets if needed.
+# Compiler-specific options
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  # Add MSVC-specific options here
+  target_compile_options(Amfitrack_API PRIVATE /W4 /permissive-)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  # Add G++-specific options here
+  target_compile_options(Amfitrack_API PRIVATE -Wall -Wextra -pedantic)
+endif()

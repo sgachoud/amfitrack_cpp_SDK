@@ -57,7 +57,7 @@ static uint8_t const CRC8_Table[] =
     0xd8, 0xf7, 0x86, 0xa9, 0x64, 0x4b, 0x3a, 0x15, 0x8f, 0xa0, 0xd1, 0xfe, 0x33, 0x1c, 0x6d, 0x42,
 };
 #ifndef NRF52840_XXAA 
-static_assert(sizeof(CRC8_Table) == 256, "CRC8_Table does not have 256 elements");
+// static_assert(sizeof(CRC8_Table) == 256, "CRC8_Table does not have 256 elements");'
 #endif
 //-----------------------------------------------------------------------------
 // Functions

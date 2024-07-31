@@ -662,14 +662,13 @@ void lib_AmfiProt::lib_AmfiProt_ProcessFrame(void* handle, lib_AmfiProt_Frame_t*
                     size_t minimum_payload_size = sizeof(lib_AmfiProt_ProcedureRequest_t) - 5 * sizeof(lib_Generic_Parameter_Value_t);
                     if (frame->header.length >= minimum_payload_size && frame->header.length <= maximum_payload_size)
                     {
-                        lib_AmfiProt_ProcedureRequest_t rxPayload =
-                        {
-                                .parameter1 = {.type = lib_Generic_Parameter_Type_void },
-                                .parameter2 = {.type = lib_Generic_Parameter_Type_void },
-                                .parameter3 = {.type = lib_Generic_Parameter_Type_void },
-                                .parameter4 = {.type = lib_Generic_Parameter_Type_void },
-                                .parameter5 = {.type = lib_Generic_Parameter_Type_void },
-                        };
+                        lib_AmfiProt_ProcedureRequest_t rxPayload;
+                        rxPayload.parameter1.type = lib_Generic_Parameter_Type_void;
+                        rxPayload.parameter2.type = lib_Generic_Parameter_Type_void;
+                        rxPayload.parameter3.type = lib_Generic_Parameter_Type_void;
+                        rxPayload.parameter4.type = lib_Generic_Parameter_Type_void;
+                        rxPayload.parameter5.type = lib_Generic_Parameter_Type_void;
+                        
                         memcpy(&rxPayload, frame->payload, frame->header.length);
 
                         this->libAmfiProt_handle_RequestProcedureCall(handle, frame, routing_handle);

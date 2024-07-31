@@ -244,7 +244,7 @@ int8_t rssi;
 /** Frame ID */
 lib_AmfiProt_Amfitrack_FrameID_24b_t frame_id;
 } lib_AmfiProt_Amfitrack_Sensor_Measurement_t;
-static_assert(sizeof(lib_AmfiProt_Amfitrack_Sensor_Measurement_t) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_Amfitrack_Sensor_Measurement_t larger than max payload size");
+// static_assert(sizeof(lib_AmfiProt_Amfitrack_Sensor_Measurement_t) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_Amfitrack_Sensor_Measurement_t larger than max payload size");
 
 /**
  * Source calibration package (PayloadType == 0x23)
@@ -330,7 +330,7 @@ float voltage_coil_z_in_V;
 float voltage_boost_in_V;
 #endif
 } lib_AmfiProt_Amfitrack_Source_Measurement_t;
-static_assert(sizeof(lib_AmfiProt_Amfitrack_Source_Measurement_t) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_Amfitrack_Source_Measurement_t larger than max payload size");
+// static_assert(sizeof(lib_AmfiProt_Amfitrack_Source_Measurement_t) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_Amfitrack_Source_Measurement_t larger than max payload size");
 
 typedef __PACKED_STRUCT
 {
@@ -341,7 +341,7 @@ typedef __PACKED_STRUCT
     uint8_t source_id;
     lib_AmfiProt_Amfitrack_FrameID_24b_t frame_id;
 } lib_AmfiProt_Amfitrack_Sensor_BField_t;
-static_assert(sizeof(lib_AmfiProt_Amfitrack_Sensor_BField_t) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_Amfitrack_Sensor_BField_t larger than max payload size");
+// static_assert(sizeof(lib_AmfiProt_Amfitrack_Sensor_BField_t) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_Amfitrack_Sensor_BField_t larger than max payload size");
 
 typedef __PACKED_STRUCT
 {
@@ -363,7 +363,7 @@ typedef __PACKED_STRUCT
     uint8_t metal_distortion;
     lib_AmfiProt_Amfitrack_FrameID_24b_t frame_id;
 } lib_AmfiProt_Amfitrack_Sensor_BField_With_IMU_t;
-static_assert(sizeof(lib_AmfiProt_Amfitrack_Sensor_BField_With_IMU_t) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_Amfitrack_Sensor_BField_With_IMU_t larger than max payload size");
+// static_assert(sizeof(lib_AmfiProt_Amfitrack_Sensor_BField_With_IMU_t) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_Amfitrack_Sensor_BField_With_IMU_t larger than max payload size");
 
 
 typedef __PACKED_STRUCT

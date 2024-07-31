@@ -20,11 +20,11 @@
 #define __PACKED_STRUCT struct 
 #define __weak  
 #define __packed
-#pragma pack(1)
 #else
 #if defined(__MINGW32__) ||  defined(__MINGW64__)
-#define __packed __attribute__((packed, aligned(1)))
-#define __weak  __attribute__((weak))
+#define __PACKED_STRUCT struct 
+#define __weak  
+#define __packed 
 #endif
 #endif
 
