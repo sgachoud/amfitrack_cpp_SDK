@@ -16,7 +16,6 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <iostream>
 #include <assert.h>
 
 #ifdef USE_PROJECT_CONF

@@ -10,7 +10,6 @@
 // Includes
 //-----------------------------------------------------------------------------
 #include <iostream>
-#include <memory>
 #include <assert.h>
 #include <stdio.h>
 

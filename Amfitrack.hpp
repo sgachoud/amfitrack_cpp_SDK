@@ -19,16 +19,9 @@
 // Includes
 //-----------------------------------------------------------------------------
 #include <string.h>
-#include <cstdlib>
-#include <iostream>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <time.h>
-#include <string.h>
-#include <vector>
-#include <memory>
-#include <thread>
 #include "lib/amfiprotapi/lib_AmfiProt_API.hpp"
 
 
@@ -37,6 +30,10 @@
 //-----------------------------------------------------------------------------
 #define MAX_NAME_LENGTH 64
 #define MAX_NUMBER_OF_DEVICES 254
+
+#ifdef _MSC_VER
+#define USE_THREAD_BASED
+#endif
 //-----------------------------------------------------------------------------
 // Type declarations
 //-----------------------------------------------------------------------------
@@ -58,7 +55,7 @@ public:
 	}
 
 	/* Call first to initialize USB and connect to devices */
-	void initialize_amfitrack(bool USB_enable);
+	void initialize_amfitrack();
 
 	/* Starts the main thread, that reads data from all connected devices */
 	void start_amfitrack_task(void);
@@ -85,11 +82,8 @@ private:
 
 	lib_AmfiProt_Amfitrack_Pose_t Position[MAX_NUMBER_OF_DEVICES];
 
-
 	static void background_amfitrack_task(AMFITRACK*);
 	void checkDeviceDisconnected(uint8_t DeviceID);
-
-	bool useUSB = false;
 
 	AMFITRACK();
 	~AMFITRACK();

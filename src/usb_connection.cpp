@@ -29,6 +29,7 @@ void libAmfiProt_handle_RespondDeviceID(void *handle, lib_AmfiProt_Frame_t *fram
     uint8_t lshift;
     for (uint8_t i = 2; i < sizeof(lib_AmfiProt_DeviceID_t) - sizeof(uint32_t); ++i)
     {
+        if (idx >= 3) break;
         lshift = ((i - 2) % 4) * 8;
         uuid[idx] |= frame->payload[i] << lshift;
         if ((i - 2) % 4 == 3)
@@ -409,13 +410,13 @@ void usb_connection::usb_run(void)
     size_t QueueDataLength = 0;
     uint8_t tx_id = 0;
     uint8_t *TransmitData = NULL;
-    if (_amfiprot_api.is_queue_data_ready_for_transmit(&QueueIdx, &QueueDataLength, &tx_id, TransmitData))
+    if (_amfiprot_api.isDataReadyForTransmit(&QueueIdx, &QueueDataLength, &tx_id, TransmitData))
     {
         hid_device *dev_handle = this->get_device_handle(tx_id);
         if (dev_handle)
         {
             transfer_length = this->write_blocking(dev_handle, TransmitData, QueueDataLength);
-            _amfiprot_api.set_transmit_ongoing(QueueIdx);
+            _amfiprot_api.set_transmit_ongoing_and_check_respons_request(QueueIdx);
 #ifdef USB_CONNECTION_DEBUG_INFO
             std::cout << "Data written" << std::endl;
 #endif

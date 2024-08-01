@@ -133,7 +133,7 @@ bool AmfiProt_API::deserialize_frame(void const* pData, uint8_t length)
     return isOk;
 }
 
-bool AmfiProt_API::is_queue_data_ready_for_transmit(size_t *QueueIdx, size_t *QueueDataLength, uint8_t *TxID, void *TransmitData)
+bool AmfiProt_API::isDataReadyForTransmit(size_t *QueueIdx, size_t *QueueDataLength, uint8_t *TxID, void *TransmitData)
 {
     bool isDataReady = false;
 
@@ -155,7 +155,7 @@ bool AmfiProt_API::is_queue_data_ready_for_transmit(size_t *QueueIdx, size_t *Qu
     return isDataReady;
 }
 
-void AmfiProt_API::set_transmit_ongoing(uint8_t idx)
+void AmfiProt_API::set_transmit_ongoing_and_check_respons_request(uint8_t idx)
 {
     isTransmitting = true;
     isRequestAckSet(idx);

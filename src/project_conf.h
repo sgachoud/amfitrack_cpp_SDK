@@ -10,4 +10,6 @@
  * Source measurement package changed from firmware 300 to 301. */
 #define FIRMWARE_VERSION 301
 
+#define USE_USB
+
 #endif /* PROJECT_CONF_H_ */

@@ -19,15 +19,9 @@
 // Includes
 //-----------------------------------------------------------------------------
 #include <string.h>
-#include <cstdlib>
-#include <iostream>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <time.h>
-#include <string.h>
-#include <vector>
-#include <memory>
 #include "lib_AmfiProt.hpp"
 #include "lib_AmfiProt_Amfitrack.hpp"
 
@@ -48,6 +42,8 @@ extern "C"
 constexpr auto VID = 0x0C17;
 constexpr auto PID_Source = 0x0D01; // Source
 constexpr auto PID_Sensor = 0x0D12; // Sensor
+
+#define MAX_PAYLOAD_SIZE 54
 
 //-----------------------------------------------------------------------------
 // Type declarations
@@ -77,8 +73,8 @@ public:
     bool queue_frame(void const* payload, uint8_t length, uint8_t payloadType, lib_AmfiProt_packetType_t packetType, uint8_t destination);
     bool deserialize_frame(void const* pData, uint8_t length);
 
-    bool is_queue_data_ready_for_transmit(size_t *QueueIdx, size_t *QueueDataLength, uint8_t *TxID, void *TransmitData);
-    void set_transmit_ongoing(uint8_t idx);
+    bool isDataReadyForTransmit(size_t *QueueIdx, size_t *QueueDataLength, uint8_t *TxID, void *TransmitData);
+    void set_transmit_ongoing_and_check_respons_request(uint8_t idx);
 
     void isRequestAckSet(uint8_t idx);
     void clear_isTransmitting(lib_AmfiProt_Frame_t* frame);

@@ -1,18 +1,14 @@
-#include <iostream>
-#include <cstdint>
-#include <fstream>
-#include <string>
-#include <ctime>
 #include "lib_AmfiProt_API.hpp"
 #include "Amfitrack.hpp"
+#ifdef USE_USB
 #include "src/usb_connection.h"
+#endif
+#ifdef USE_THREAD_BASED
 #include <process.h>
+#include <thread>
+#endif
 
 //#define AMFITRACK_DEBUG_INFO
-
-#ifdef _MSC_VER
-#define USE_THREAD_BASED
-#endif
 
 static bool stop_running = false;
 
@@ -45,7 +41,9 @@ void AMFITRACK::background_amfitrack_task(AMFITRACK* inst)
 {
 #if defined(USE_THREAD_BASED)
     /* Creates instance of USB */
+#ifdef USE_USB
     usb_connection& usb = usb_connection::getInstance();
+#endif
     AmfiProt_API& amfiprot_api = AmfiProt_API::getInstance();
     AMFITRACK& AMFITRACK = AMFITRACK::getInstance();
 
@@ -55,10 +53,9 @@ void AMFITRACK::background_amfitrack_task(AMFITRACK* inst)
 
     while (!stop_running)
     {
-        if (AMFITRACK.useUSB)
-        {
-            usb.usb_run();
-        }
+#ifdef USE_USB
+        usb.usb_run();
+#endif
         
         amfiprot_api.amfiprot_run();
 
@@ -100,15 +97,15 @@ void AMFITRACK::stop_amfitrack_task(void)
 
 void AMFITRACK::amfitrack_main_loop(void)
 {
-
+#ifdef USE_USB
     usb_connection& usb = usb_connection::getInstance();
+#endif
     AmfiProt_API& amfiprot_api = AmfiProt_API::getInstance();
     AMFITRACK& AMFITRACK = AMFITRACK::getInstance();
 
-    if (useUSB)
-    {
-        usb.usb_run();
-    }
+#ifdef USE_USB
+    usb.usb_run();
+#endif
     amfiprot_api.amfiprot_run();
 
     for (uint8_t devices = 0; devices < MAX_NUMBER_OF_DEVICES; devices++)
@@ -120,17 +117,17 @@ void AMFITRACK::amfitrack_main_loop(void)
     }
 }
 
-void AMFITRACK::initialize_amfitrack(bool USB_enable)
+void AMFITRACK::initialize_amfitrack()
 {
+#ifdef USE_USB
     /* Initialize USB conenction */
     usb_connection& usb = usb_connection::getInstance();
+#endif
     AmfiProt_API& amfiprot_api = AmfiProt_API::getInstance();
 
-    if (USB_enable)
-    {
-        useUSB = USB_enable;
-        usb.usb_init();
-    }
+#ifdef USE_USB
+    usb.usb_init();
+#endif
 }
 
 void AMFITRACK::setDeviceName(uint8_t DeviceID, char* name, uint8_t length)

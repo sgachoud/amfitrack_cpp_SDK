@@ -9,12 +9,9 @@
 //-----------------------------------------------------------------------------
 // Includes
 //-----------------------------------------------------------------------------
-#include <iostream>
-#include <memory>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <time.h>
 #include <string.h>
 #include <vector>
 
