@@ -1,2 +1,4 @@
 /.vs
 /out
+/.vscode/settings.json
+/.vscode/tasks.json

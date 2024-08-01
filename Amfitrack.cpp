@@ -4,7 +4,7 @@
 #include "src/usb_connection.h"
 #endif
 #ifdef USE_THREAD_BASED
-#include <process.h>
+#include <iostream>
 #include <thread>
 #endif
 

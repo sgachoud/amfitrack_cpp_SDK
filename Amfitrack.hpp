@@ -22,6 +22,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "src/project_conf.h"
 #include "lib/amfiprotapi/lib_AmfiProt_API.hpp"
 
 

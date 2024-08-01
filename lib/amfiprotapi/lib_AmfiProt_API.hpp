@@ -25,6 +25,10 @@
 #include "lib_AmfiProt.hpp"
 #include "lib_AmfiProt_Amfitrack.hpp"
 
+#ifdef USE_ACTIVE_DEVICE_HANDLING
+#include "time.h"
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {

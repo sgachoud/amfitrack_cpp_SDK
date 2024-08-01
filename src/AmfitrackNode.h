@@ -17,6 +17,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <vector>
+#include <memory>
 
 #include "../lib/hidapi/hidapi.h"
 #include "../lib/amfiprotapi/lib_AmfiProt.hpp"
