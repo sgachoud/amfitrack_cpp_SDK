@@ -58,7 +58,7 @@ public:
 	}
 
 	/* Call first to initialize USB and connect to devices */
-	void initialize_amfitrack(void);
+	void initialize_amfitrack(bool USB_enable);
 
 	/* Starts the main thread, that reads data from all connected devices */
 	void start_amfitrack_task(void);
@@ -88,6 +88,8 @@ private:
 
 	static void background_amfitrack_task(AMFITRACK*);
 	void checkDeviceDisconnected(uint8_t DeviceID);
+
+	bool useUSB = false;
 
 	AMFITRACK();
 	~AMFITRACK();

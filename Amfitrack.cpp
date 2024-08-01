@@ -55,7 +55,11 @@ void AMFITRACK::background_amfitrack_task(AMFITRACK* inst)
 
     while (!stop_running)
     {
-        usb.usb_run();
+        if (AMFITRACK.useUSB)
+        {
+            usb.usb_run();
+        }
+        
         amfiprot_api.amfiprot_run();
 
         for (uint8_t devices = 0; devices < MAX_NUMBER_OF_DEVICES; devices++)
@@ -96,12 +100,15 @@ void AMFITRACK::stop_amfitrack_task(void)
 
 void AMFITRACK::amfitrack_main_loop(void)
 {
-    /* Creates instance of USB */
+
     usb_connection& usb = usb_connection::getInstance();
     AmfiProt_API& amfiprot_api = AmfiProt_API::getInstance();
     AMFITRACK& AMFITRACK = AMFITRACK::getInstance();
 
-    usb.usb_run();
+    if (useUSB)
+    {
+        usb.usb_run();
+    }
     amfiprot_api.amfiprot_run();
 
     for (uint8_t devices = 0; devices < MAX_NUMBER_OF_DEVICES; devices++)
@@ -113,12 +120,17 @@ void AMFITRACK::amfitrack_main_loop(void)
     }
 }
 
-void AMFITRACK::initialize_amfitrack(void)
+void AMFITRACK::initialize_amfitrack(bool USB_enable)
 {
+    /* Initialize USB conenction */
     usb_connection& usb = usb_connection::getInstance();
     AmfiProt_API& amfiprot_api = AmfiProt_API::getInstance();
-    /* Initialize USB conenction */
-    usb.usb_init();
+
+    if (USB_enable)
+    {
+        useUSB = USB_enable;
+        usb.usb_init();
+    }
 }
 
 void AMFITRACK::setDeviceName(uint8_t DeviceID, char* name, uint8_t length)

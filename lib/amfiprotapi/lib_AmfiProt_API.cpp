@@ -113,6 +113,54 @@ bool AmfiProt_API::queue_frame(void const* payload, uint8_t length, uint8_t payl
     return isOk;
 }
 
+bool AmfiProt_API::deserialize_frame(void const* pData, uint8_t length)
+{
+    bool isOk = false;
+    lib_AmfiProt_Frame_t frame;
+    if (lib_AmfiProt_DeserializeFrame(&frame, pData, length))
+    {
+        if (!libQueue_Full(&incomingBulkPointer))
+        {
+            memcpy(&(incomingBulkData[libQueue_Write(&incomingBulkPointer)]), &frame, sizeof(frame));
+            libQueue_Add(&(incomingBulkPointer));
+            isOk = true;
+        }
+        else
+        {
+            std::cout << "Queue full" << std::endl;
+        }
+    }
+    return isOk;
+}
+
+bool AmfiProt_API::is_queue_data_ready_for_transmit(size_t *QueueIdx, size_t *QueueDataLength, uint8_t *TxID, void *TransmitData)
+{
+    bool isDataReady = false;
+
+    if (!isTransmitting && !libQueue_Empty(&(outgoingBulkPointer)))
+    {
+        size_t idx = libQueue_Read(&(outgoingBulkPointer));
+        size_t length = outgoingBulkData[idx].header.length + sizeof(lib_AmfiProt_Header) + 1;
+        // Find matching TxID
+        uint8_t tx_id = outgoingBulkData[idx].header.destination;
+
+        TransmitData = &outgoingBulkData[idx];
+        QueueIdx = &idx;
+        QueueDataLength = &length;
+        TxID = &tx_id;
+
+        isDataReady = true;
+    }
+
+    return isDataReady;
+}
+
+void AmfiProt_API::set_transmit_ongoing(uint8_t idx)
+{
+    isTransmitting = true;
+    isRequestAckSet(idx);
+}
+
 void AmfiProt_API::amfiprot_run(void)
 {
     this->process_incoming_queue();
@@ -123,9 +171,6 @@ void AmfiProt_API::amfiprot_run(void)
 
     if (this->isTransmitting && (diffTime >= 1.0))
     {
-#ifdef USB_CONNECTION_DEBUG_INFO
-        printf("Transmit failed, retransmitting package \n");
-#endif
         this->_retransmitCount++;
         if (this->_retransmitCount >= 3)
         {

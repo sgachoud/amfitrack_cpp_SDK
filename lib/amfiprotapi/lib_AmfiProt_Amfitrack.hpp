@@ -285,8 +285,8 @@ static_assert(sizeof(lib_AmfiProt_Amfitrack_Source_Calibration_t) <= AmfiProtMax
  */
 typedef __PACKED_STRUCT
 {
-    /** X coil current in mA */
-    float current_coil_x_in_mA;
+/** X coil current in mA */
+float current_coil_x_in_mA;
 
 /** Y coil current in mA */
 float current_coil_y_in_mA;

@@ -405,18 +405,17 @@ void usb_connection::usb_run(void)
         time(&this->CheckForDevice_Timer);
     }
 
-    if (!_amfiprot_api.isTransmitting && !libQueue_Empty(&(_amfiprot_api.outgoingBulkPointer)))
+    size_t QueueIdx = 0;
+    size_t QueueDataLength = 0;
+    uint8_t tx_id = 0;
+    uint8_t *TransmitData = NULL;
+    if (_amfiprot_api.is_queue_data_ready_for_transmit(&QueueIdx, &QueueDataLength, &tx_id, TransmitData))
     {
-        size_t idx = libQueue_Read(&(_amfiprot_api.outgoingBulkPointer));
-        size_t length = _amfiprot_api.outgoingBulkData[idx].header.length + sizeof(lib_AmfiProt_Header) + 1;
-        // Find matching TxID
-        uint8_t tx_id = _amfiprot_api.outgoingBulkData[idx].header.destination;
         hid_device *dev_handle = this->get_device_handle(tx_id);
         if (dev_handle)
         {
-            transfer_length = this->write_blocking(dev_handle, &(_amfiprot_api.outgoingBulkData[idx]), length);
-            _amfiprot_api.isTransmitting = true;
-            _amfiprot_api.isRequestAckSet(idx);
+            transfer_length = this->write_blocking(dev_handle, TransmitData, QueueDataLength);
+            _amfiprot_api.set_transmit_ongoing(QueueIdx);
 #ifdef USB_CONNECTION_DEBUG_INFO
             std::cout << "Data written" << std::endl;
 #endif
@@ -437,19 +436,7 @@ void usb_connection::usb_run(void)
         if (this->read_timeout(node->getDeviceHandle(), rx_frame.data, USB_REPORT_LENGTH, 1) >= 0)
 #endif
         {
-            lib_AmfiProt_Frame_t frame;
-            if (_amfiprot_api.lib_AmfiProt_DeserializeFrame(&frame, rx_frame.data, USB_REPORT_LENGTH - 2))
-            {
-                if (!libQueue_Full(&_amfiprot_api.incomingBulkPointer))
-                {
-                    memcpy(&(_amfiprot_api.incomingBulkData[libQueue_Write(&_amfiprot_api.incomingBulkPointer)]), &frame, sizeof(frame));
-                    libQueue_Add(&(_amfiprot_api.incomingBulkPointer));
-                }
-                else
-                {
-                    std::cout << "Queue full" << std::endl;
-                }
-            }
+            _amfiprot_api.deserialize_frame(rx_frame.data, USB_REPORT_LENGTH - 2);
         }
     }
 }
