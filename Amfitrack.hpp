@@ -31,9 +31,6 @@
 #define MAX_NAME_LENGTH 64
 #define MAX_NUMBER_OF_DEVICES 254
 
-#ifdef _MSC_VER
-#define USE_THREAD_BASED
-#endif
 //-----------------------------------------------------------------------------
 // Type declarations
 //-----------------------------------------------------------------------------
@@ -78,7 +75,9 @@ public:
 private:
 	char Name[MAX_NUMBER_OF_DEVICES][MAX_NAME_LENGTH]; // Array of character arrays to store device names
 	bool DeviceActive[MAX_NUMBER_OF_DEVICES];
+#ifdef USE_ACTIVE_DEVICE_HANDLING
 	time_t DeviceLastTimeSeen[MAX_NUMBER_OF_DEVICES];
+#endif
 
 	lib_AmfiProt_Amfitrack_Pose_t Position[MAX_NUMBER_OF_DEVICES];
 

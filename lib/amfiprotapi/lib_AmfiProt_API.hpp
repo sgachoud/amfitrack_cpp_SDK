@@ -39,9 +39,9 @@ extern "C"
 //-----------------------------------------------------------------------------
 // Defines
 //-----------------------------------------------------------------------------
-constexpr auto VID = 0x0C17;
-constexpr auto PID_Source = 0x0D01; // Source
-constexpr auto PID_Sensor = 0x0D12; // Sensor
+const uint32_t VID = 0x0C17;
+const uint32_t PID_Source = 0x0D01; // Source
+const uint32_t PID_Sensor = 0x0D12; // Sensor
 
 #define MAX_PAYLOAD_SIZE 54
 
@@ -148,7 +148,9 @@ private:
 
     uint8_t _retransmitCount;
     bool _lastPackageNumberError;
+#ifdef USE_ACTIVE_DEVICE_HANDLING
     time_t _retransmitTimer;
+#endif
 };
 
 //-----------------------------------------------------------------------------

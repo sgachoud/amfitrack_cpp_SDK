@@ -6,6 +6,9 @@
 #ifndef USB_CONNECTION_H_
 #define USB_CONNECTION_H_
 
+#include "project_conf.h"
+#ifdef USE_USB
+
 #define USE_HID
 //-----------------------------------------------------------------------------
 // Includes
@@ -105,5 +108,5 @@ public:
     void usb_run(void);
 };
 
-
+#endif
 #endif // USB_CONNECTION_H_

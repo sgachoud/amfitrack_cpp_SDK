@@ -1,4 +1,4 @@
-#include "lib_AmfiProt_API.hpp"
+#include "lib/amfiprotapi/lib_AmfiProt_API.hpp"
 #include "Amfitrack.hpp"
 #ifdef USE_USB
 #include "src/usb_connection.h"
@@ -108,6 +108,7 @@ void AMFITRACK::amfitrack_main_loop(void)
 #endif
     amfiprot_api.amfiprot_run();
 
+#ifdef USE_ACTIVE_DEVICE_HANDLING
     for (uint8_t devices = 0; devices < MAX_NUMBER_OF_DEVICES; devices++)
     {
         if (AMFITRACK.getDeviceActive(devices))
@@ -115,6 +116,7 @@ void AMFITRACK::amfitrack_main_loop(void)
             AMFITRACK.checkDeviceDisconnected(devices);
         }
     }
+#endif
 }
 
 void AMFITRACK::initialize_amfitrack()
@@ -147,6 +149,7 @@ void AMFITRACK::setDeviceName(uint8_t DeviceID, char* name, uint8_t length)
 
 void AMFITRACK::checkDeviceDisconnected(uint8_t DeviceID)
 {
+#ifdef USE_ACTIVE_DEVICE_HANDLING
     time_t CurrentTime = time(0);
 
     if (difftime(CurrentTime, DeviceLastTimeSeen[DeviceID]) > 5.0)
@@ -154,18 +157,19 @@ void AMFITRACK::checkDeviceDisconnected(uint8_t DeviceID)
         DeviceActive[DeviceID] = false;
         std::cout << "Device " << std::dec << static_cast<unsigned>(DeviceID) << " disconnected" << std::endl;
     }
-
+#endif
 }
 
 void AMFITRACK::setDeviceActive(uint8_t DeviceID)
 {
+#ifdef USE_ACTIVE_DEVICE_HANDLING
     if (!DeviceActive[DeviceID]) std::cout << "Device " << std::dec << static_cast<unsigned>(DeviceID) << " connected" << std::endl;
     DeviceActive[DeviceID] = true;
     DeviceLastTimeSeen[DeviceID] = time(0);
 #ifdef AMFITRACK_DEBUG_INFO
     std::cout << "Device " << DeviceID << " is active" << std::endl;
 #endif // AMFITRACK_DEBUG_INFO
-    
+#endif
 }
 
 bool AMFITRACK::getDeviceActive(uint8_t DeviceID)

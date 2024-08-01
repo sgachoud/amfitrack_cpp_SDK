@@ -6,6 +6,9 @@
 #ifndef AMFITRACKNODES_H_
 #define AMFITRACKNODES_H_
 
+#include "project_conf.h"
+#ifdef USE_ACTIVE_DEVICE_HANDLING
+
 //-----------------------------------------------------------------------------
 // Includes
 //-----------------------------------------------------------------------------
@@ -74,5 +77,5 @@ public:
     bool isRF() const;
 
 };
-
+#endif
 #endif // AMFITRACKNODES_H_H

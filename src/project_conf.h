@@ -10,6 +10,15 @@
  * Source measurement package changed from firmware 300 to 301. */
 #define FIRMWARE_VERSION 301
 
+/* Use if library should handle device connection and read/write to devices.
+ * If disabled library can be used to deserialize and do the package handling alone */
+#define USE_ACTIVE_DEVICE_HANDLING
+
+/* Use if a USB connection is needed. 
+ * Is using HIDAPI and runs in windows */
 #define USE_USB
+
+/* Use if a thread is needed to handle USB and process data */
+#define USE_THREAD_BASED
 
 #endif /* PROJECT_CONF_H_ */

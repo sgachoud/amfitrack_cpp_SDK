@@ -21,12 +21,14 @@
 #define __weak  
 #define __packed
 #pragma pack(1)
-#else
-#if defined(__MINGW32__) ||  defined(__MINGW64__)
+#elif defined(__MINGW32__) ||  defined(__MINGW64__)
 #define __PACKED_STRUCT struct 
 #define __weak  
 #define __packed 
-#endif
+#else
+#define __PACKED_STRUCT struct
+#define __weak
+#define __PACKED __attribute__((packed))
 #endif
 
 //-----------------------------------------------------------------------------
