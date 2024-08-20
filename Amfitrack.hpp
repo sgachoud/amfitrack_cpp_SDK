@@ -73,6 +73,10 @@ public:
 	/* Get the pose for a specific device */
 	void getDevicePose(uint8_t DeviceID, lib_AmfiProt_Amfitrack_Pose_t* Pose);
 
+	void setSensorMeasurements(uint8_t DeviceID,lib_AmfiProt_Amfitrack_Sensor_Measurement_t SensorMeasurement);
+
+	void getSensorMeasurements(uint8_t DeviceID,lib_AmfiProt_Amfitrack_Sensor_Measurement_t* SensorMeasurement);
+
 private:
 	char Name[MAX_NUMBER_OF_DEVICES][MAX_NAME_LENGTH]; // Array of character arrays to store device names
 	bool DeviceActive[MAX_NUMBER_OF_DEVICES];
@@ -81,6 +85,7 @@ private:
 #endif
 
 	lib_AmfiProt_Amfitrack_Pose_t Position[MAX_NUMBER_OF_DEVICES];
+	lib_AmfiProt_Amfitrack_Sensor_Measurement_t SensorMeasurements[MAX_NUMBER_OF_DEVICES];
 
 	static void background_amfitrack_task(AMFITRACK*);
 	void checkDeviceDisconnected(uint8_t DeviceID);
