@@ -193,6 +193,16 @@ void AMFITRACK::getDevicePose(uint8_t DeviceID, lib_AmfiProt_Amfitrack_Pose_t* P
     memcpy(Pose, &Position[DeviceID], sizeof(lib_AmfiProt_Amfitrack_Pose_t));
 }
 
+void AMFITRACK::setSensorMeasurements(uint8_t DeviceID, lib_AmfiProt_Amfitrack_Sensor_Measurement_t SensorMeasurement)
+{
+    memcpy(&SensorMeasurements[DeviceID], &SensorMeasurement, sizeof(lib_AmfiProt_Amfitrack_Sensor_Measurement_t));
+}
+
+void AMFITRACK::getSensorMeasurements(uint8_t DeviceID, lib_AmfiProt_Amfitrack_Sensor_Measurement_t* SensorMeasurement)
+{
+    if (!getDeviceActive(DeviceID)) return;
+    memcpy(SensorMeasurement, &SensorMeasurements[DeviceID], sizeof(lib_AmfiProt_Amfitrack_Sensor_Measurement_t));
+}
 
 void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SourceCalibration(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)
 {
@@ -214,6 +224,7 @@ void AmfiProt_API::lib_AmfiProt_Amfitrack_handle_SensorMeasurement(void* handle,
     lib_AmfiProt_Amfitrack_Pose_t tempPose;
     lib_AmfiProt_Amfitrack_decode_pose_i24(&SensorMeasurement.pose, &tempPose);
     AMFITRACK.setDevicePose(frame->header.source, tempPose);
+    AMFITRACK.setSensorMeasurements(frame->header.source, SensorMeasurement);
     AMFITRACK.setDeviceActive(frame->header.source);
 }
 
@@ -450,7 +461,3 @@ void AmfiProt_API::libAmfiProt_handle_RequestFirmwareVersionPerID(void* handle, 
 {
     /* NOTE: Overwrite in application-specific library */
 }
-
-
-
-
