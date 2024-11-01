@@ -147,6 +147,18 @@ void AMFITRACK::setDeviceName(uint8_t DeviceID, char* name, uint8_t length)
 #endif // AMFITRACK_DEBUG_INFO
 }
 
+void AMFITRACK::setConfiguration(uint8_t DeviceID, uint32_t UID, lib_Generic_Parameter_Value_t parameter)
+{
+    AmfiProt_API& amfiprot_api = AmfiProt_API::getInstance();
+    lib_AmfiProt_ConfigValueUID_t ConfigurationPayload = { 0 };
+    ConfigurationPayload.payloadID = lib_AmfiProt_PayloadID_SetConfigurationValueUID;
+    ConfigurationPayload.uid = UID;
+    ConfigurationPayload.value = parameter;
+    uint8_t payloadSize = sizeof(ConfigurationPayload) - sizeof(ConfigurationPayload.value) + lib_Generic_Parameter_SizeWithType(ConfigurationPayload.value);
+   
+    amfiprot_api.queue_frame(&ConfigurationPayload, payloadSize, libAmfiProt_PayloadType_Common, lib_AmfiProt_packetType_NoAck, DeviceID);
+}
+
 void AMFITRACK::checkDeviceDisconnected(uint8_t DeviceID)
 {
 #ifdef USE_ACTIVE_DEVICE_HANDLING
@@ -349,7 +361,7 @@ void AmfiProt_API::libAmfiProt_handle_ReplyDeviceName(void* handle, lib_AmfiProt
 {
     AMFITRACK& AMFITRACK = AMFITRACK::getInstance();
     size_t str_length = strnlen((char*)(&(frame->payload[1])), MAX_PAYLOAD_SIZE - 1);
-    AMFITRACK.setDeviceName(frame->header.destination, (char*)(&(frame->payload[1])), str_length);
+    AMFITRACK.setDeviceName(frame->header.source, (char*)(&(frame->payload[1])), str_length);
 }
 
 void AmfiProt_API::libAmfiProt_handle_RequestConfigurationValue(void* handle, lib_AmfiProt_Frame_t* frame, void* routing_handle)

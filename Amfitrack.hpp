@@ -65,6 +65,8 @@ public:
 
 	void setDeviceName(uint8_t DeviceID, char* name, uint8_t length);
 
+	void setConfiguration(uint8_t DeviceID, uint32_t UID, lib_Generic_Parameter_Value_t parameter);
+
 	void setDeviceActive(uint8_t DeviceID);
 	/* Return if a device is connected */
 	bool getDeviceActive(uint8_t DeviceID);

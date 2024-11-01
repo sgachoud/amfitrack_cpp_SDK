@@ -135,7 +135,7 @@ bool AmfiProt_API::deserialize_frame(void const* pData, uint8_t length)
     return isOk;
 }
 
-bool AmfiProt_API::isDataReadyForTransmit(size_t *QueueIdx, size_t *QueueDataLength, uint8_t *TxID, void *TransmitData)
+bool AmfiProt_API::isDataReadyForTransmit(size_t *QueueIdx, size_t *QueueDataLength, uint8_t *TxID, void **TransmitData)
 {
     bool isDataReady = false;
 
@@ -146,10 +146,10 @@ bool AmfiProt_API::isDataReadyForTransmit(size_t *QueueIdx, size_t *QueueDataLen
         // Find matching TxID
         uint8_t tx_id = outgoingBulkData[idx].header.destination;
 
-        TransmitData = &outgoingBulkData[idx];
-        QueueIdx = &idx;
-        QueueDataLength = &length;
-        TxID = &tx_id;
+        *TransmitData = &outgoingBulkData[idx];
+        *QueueIdx = idx;
+        *QueueDataLength = length;
+        *TxID = tx_id;
 
         isDataReady = true;
     }

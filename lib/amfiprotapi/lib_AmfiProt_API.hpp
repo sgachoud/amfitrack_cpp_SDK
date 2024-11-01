@@ -77,7 +77,7 @@ public:
     bool queue_frame(void const* payload, uint8_t length, uint8_t payloadType, lib_AmfiProt_packetType_t packetType, uint8_t destination);
     bool deserialize_frame(void const* pData, uint8_t length);
 
-    bool isDataReadyForTransmit(size_t *QueueIdx, size_t *QueueDataLength, uint8_t *TxID, void *TransmitData);
+    bool isDataReadyForTransmit(size_t *QueueIdx, size_t *QueueDataLength, uint8_t *TxID, void **TransmitData);
     void set_transmit_ongoing_and_check_respons_request(uint8_t idx);
 
     void isRequestAckSet(uint8_t idx);

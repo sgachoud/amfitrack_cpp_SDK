@@ -410,8 +410,8 @@ void usb_connection::usb_run(void)
     size_t QueueIdx = 0;
     size_t QueueDataLength = 0;
     uint8_t tx_id = 0;
-    uint8_t *TransmitData = NULL;
-    if (_amfiprot_api.isDataReadyForTransmit(&QueueIdx, &QueueDataLength, &tx_id, TransmitData))
+    void *TransmitData = NULL;
+    if (_amfiprot_api.isDataReadyForTransmit(&QueueIdx, &QueueDataLength, &tx_id, &TransmitData))
     {
         hid_device *dev_handle = this->get_device_handle(tx_id);
         if (dev_handle)
