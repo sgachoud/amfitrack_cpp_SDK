@@ -22,13 +22,9 @@
 #define __packed
 #pragma pack(1)
 #elif defined(__MINGW32__) ||  defined(__MINGW64__)
-#define __PACKED_STRUCT struct __attribute__((packed))
+#define __PACKED_STRUCT_GENERIC struct __attribute__((packed))
 #define __weak  
-  #ifdef __GNUC__
-  #define __packed __attribute__((packed))
-  #else
-  #define __packed
-  #endif
+#define __packed __attribute__((packed))
 #else
 #define __PACKED_STRUCT struct
 #define __weak
@@ -110,7 +106,7 @@ uint8_t lib_Generic_Parameter_SizeWithType(lib_Generic_Parameter_Value_t value);
 //-----------------------------------------------------------------------------
 // Variables and constants
 //-----------------------------------------------------------------------------
-__PACKED_STRUCT lib_Generic_Parameter_Value
+__PACKED_STRUCT_GENERIC lib_Generic_Parameter_Value
 {
 	uint8_t type;
 	union {
