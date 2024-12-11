@@ -19,7 +19,7 @@
 #define __packed 
 #pragma pack(1)
 #elif defined(__MINGW32__) ||  defined(__MINGW64__)
-#define __PACKED_STRUCT struct 
+#define __PACKED_STRUCT struct __attribute__((packed)) 
 #define __weak  
 #define __PACKED __attribute__((packed)) 
 #else

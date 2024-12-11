@@ -146,20 +146,20 @@ typedef __PACKED_STRUCT
     /** 4000mg full scale (Multiply with 4/(2^15-1) to get result in g) */
     int16_t acceleration_X;
 
-/** 4000mg full scale (Multiply with 4/(2^15-1) to get result in g) */
-int16_t acceleration_Y;
+    /** 4000mg full scale (Multiply with 4/(2^15-1) to get result in g) */
+    int16_t acceleration_Y;
 
-/** 4000mg full scale (Multiply with 4/(2^15-1) to get result in g) */
-int16_t acceleration_Z;
+    /** 4000mg full scale (Multiply with 4/(2^15-1) to get result in g) */
+    int16_t acceleration_Z;
 
-/** LSB = 70mdeg/s (Multiply with 0.070*PI/180 to get result in rad/sec) */
-int16_t rotation_X;
+    /** LSB = 70mdeg/s (Multiply with 0.070*PI/180 to get result in rad/sec) */
+    int16_t rotation_X;
 
-/** LSB = 70mdeg/s (Multiply with 0.070*PI/180 to get result in rad/sec) */
-int16_t rotation_Y;
+    /** LSB = 70mdeg/s (Multiply with 0.070*PI/180 to get result in rad/sec) */
+    int16_t rotation_Y;
 
-/** LSB = 70mdeg/s (Multiply with 0.070*PI/180 to get result in rad/sec) */
-int16_t rotation_Z;
+    /** LSB = 70mdeg/s (Multiply with 0.070*PI/180 to get result in rad/sec) */
+    int16_t rotation_Z;
 } lib_AmfiProt_Amfitrack_IMU_16b_t;
 
 typedef __PACKED_STRUCT
@@ -167,11 +167,11 @@ typedef __PACKED_STRUCT
     /** 400 uT full scale (Multiply with 400/(2^15-1) to get result in uT) */
     int16_t magneto_X;
 
-/** 400 uT full scale (Multiply with 400/(2^15-1) to get result in uT) */
-int16_t magneto_Y;
+    /** 400 uT full scale (Multiply with 400/(2^15-1) to get result in uT) */
+    int16_t magneto_Y;
 
-/** 400 uT full scale (Multiply with 400/(2^15-1) to get result in uT) */
-int16_t magneto_Z;
+    /** 400 uT full scale (Multiply with 400/(2^15-1) to get result in uT) */
+    int16_t magneto_Z;
 } lib_AmfiProt_Amfitrack_magneto_16b_t;
 
 typedef __PACKED_STRUCT
@@ -179,23 +179,23 @@ typedef __PACKED_STRUCT
     /** LSB = 0.01mm (Multiply with 100000 to get results in m) */
     uint8_t position_x[3];
 
-/** LSB = 0.01mm (Multiply with 100000 to get results in m) */
-uint8_t position_y[3];
+    /** LSB = 0.01mm (Multiply with 100000 to get results in m) */
+    uint8_t position_y[3];
 
-/** LSB = 0.01mm (Multiply with 100000 to get results in m) */
-uint8_t position_z[3];
+    /** LSB = 0.01mm (Multiply with 100000 to get results in m) */
+    uint8_t position_z[3];
 
-/** LSB = 1/1000000 (Multiply with 1000000 to get unit quaternion) */
-uint8_t orientation_x[3];
+    /** LSB = 1/1000000 (Multiply with 1000000 to get unit quaternion) */
+    uint8_t orientation_x[3];
 
-/** LSB = 1/1000000 (Multiply with 1000000 to get unit quaternion) */
-uint8_t orientation_y[3];
+    /** LSB = 1/1000000 (Multiply with 1000000 to get unit quaternion) */
+    uint8_t orientation_y[3];
 
-/** LSB = 1/1000000 (Multiply with 1000000 to get unit quaternion) */
-uint8_t orientation_z[3];
+    /** LSB = 1/1000000 (Multiply with 1000000 to get unit quaternion) */
+    uint8_t orientation_z[3];
 
-/** LSB = 1/1000000 (Multiply with 1000000 to get unit quaternion) */
-uint8_t orientation_w[3];
+    /** LSB = 1/1000000 (Multiply with 1000000 to get unit quaternion) */
+    uint8_t orientation_w[3];
 } lib_AmfiProt_Amfitrack_Pose_24b_t;
 
 // ---------------------------------
@@ -210,38 +210,38 @@ typedef __PACKED_STRUCT
     /** Position and orientation */
     lib_AmfiProt_Amfitrack_Pose_24b_t pose;
 
-/** Sensor status ( \ref sensorStatus ) */
-uint8_t sensor_status;
+    /** Sensor status ( \ref sensorStatus ) */
+    uint8_t sensor_status;
 
-/** Received source ID */
-uint8_t source_id;
+    /** Received source ID */
+    uint8_t source_id;
 
-/** Calculation ID */
-uint16_t calculation_id;
+    /** Calculation ID */
+    uint16_t calculation_id;
 
-/** IMU data */
-lib_AmfiProt_Amfitrack_IMU_16b_t imu_data;
+    /** IMU data */
+    lib_AmfiProt_Amfitrack_IMU_16b_t imu_data;
 
-/** Magnetometer data */
-lib_AmfiProt_Amfitrack_magneto_16b_t magneto_data;
+    /** Magnetometer data */
+    lib_AmfiProt_Amfitrack_magneto_16b_t magneto_data;
 
-/** Magnetometer temperature */
-uint8_t temperature;        // Divide by 2 and subtract 30 to get temperature in degree C (-30 to 97.5 C range)
+    /** Magnetometer temperature */
+    uint8_t temperature;        // Divide by 2 and subtract 30 to get temperature in degree C (-30 to 97.5 C range)
 
-/** Current sensor state (See \ref SensorState_t ) */
-uint8_t sensor_state;
+    /** Current sensor state (See \ref SensorState_t ) */
+    uint8_t sensor_state;
 
-/** Metal distortion (0 == Most distortion | 255 == Least distortion)*/
-uint8_t metal_distortion;
+    /** Metal distortion (0 == Most distortion | 255 == Least distortion)*/
+    uint8_t metal_distortion;
 
-/** GPIO State */
-uint16_t gpio_state;
+    /** GPIO State */
+    uint16_t gpio_state;
 
-/** rssi */
-int8_t rssi;
+    /** rssi */
+    int8_t rssi;
 
-/** Frame ID */
-lib_AmfiProt_Amfitrack_FrameID_24b_t frame_id;
+    /** Frame ID */
+    lib_AmfiProt_Amfitrack_FrameID_24b_t frame_id;
 } lib_AmfiProt_Amfitrack_Sensor_Measurement_t;
 // static_assert(sizeof(lib_AmfiProt_Amfitrack_Sensor_Measurement_t) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_Amfitrack_Sensor_Measurement_t larger than max payload size");
 
@@ -253,29 +253,29 @@ typedef __PACKED_STRUCT
     /** X coil frequency */
     float frequency_x_in_Hz;
 
-/** Y coil frequency */
-float frequency_y_in_Hz;
+    /** Y coil frequency */
+    float frequency_y_in_Hz;
 
-/** Z coil frequency */
-float frequency_z_in_Hz;
+    /** Z coil frequency */
+    float frequency_z_in_Hz;
 
-/** X coil calibration value */
-float calibration_source_coil_x;
+    /** X coil calibration value */
+    float calibration_source_coil_x;
 
-/** Y coil calibration value */
-float calibration_source_coil_y;
+    /** Y coil calibration value */
+    float calibration_source_coil_y;
 
-/** Z coil calibration value */
-float calibration_source_coil_z;
+    /** Z coil calibration value */
+    float calibration_source_coil_z;
 
-/** Phase modulation offset X coil, used by sensor */
-float phase_modulation_offset_x;
+    /** Phase modulation offset X coil, used by sensor */
+    float phase_modulation_offset_x;
 
-/** Phase modulation offset Y coil, used by sensor */
-float phase_modulation_offset_y;
+    /** Phase modulation offset Y coil, used by sensor */
+    float phase_modulation_offset_y;
 
-/** Phase modulation offset Z coil, used by sensor */
-float phase_modulation_offset_z;
+    /** Phase modulation offset Z coil, used by sensor */
+    float phase_modulation_offset_z;
 } lib_AmfiProt_Amfitrack_Source_Calibration_t;
 static_assert(sizeof(lib_AmfiProt_Amfitrack_Source_Calibration_t) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_Amfitrack_Source_Calibration_t larger than max payload size");
 
@@ -284,49 +284,49 @@ static_assert(sizeof(lib_AmfiProt_Amfitrack_Source_Calibration_t) <= AmfiProtMax
  */
 typedef __PACKED_STRUCT
 {
-/** X coil current in mA */
-float current_coil_x_in_mA;
+    /** X coil current in mA */
+    float current_coil_x_in_mA;
 
-/** Y coil current in mA */
-float current_coil_y_in_mA;
+    /** Y coil current in mA */
+    float current_coil_y_in_mA;
 
-/** Z coil current in mA */
-float current_coil_z_in_mA;
+    /** Z coil current in mA */
+    float current_coil_z_in_mA;
 
-/** IMU data */
-lib_AmfiProt_Amfitrack_IMU_16b_t imu_data;
+    /** IMU data */
+    lib_AmfiProt_Amfitrack_IMU_16b_t imu_data;
 
-/** Magnetometer measurements */
-lib_AmfiProt_Amfitrack_magneto_16b_t magneto_data;
+    /** Magnetometer measurements */
+    lib_AmfiProt_Amfitrack_magneto_16b_t magneto_data;
 
-/** Magnetometer temperature */
-uint8_t temperature;        // Divide by 2 and subtract 30 to get temperature in degree C (-30 to 97.5 C range)
+    /** Magnetometer temperature */
+    uint8_t temperature;        // Divide by 2 and subtract 30 to get temperature in degree C (-30 to 97.5 C range)
 
-/** Source Status (TODO) */
-uint8_t source_status;      // Used to indicate battery status, sync to optitrack, hardware failures (broken wire)
+    /** Source Status (TODO) */
+    uint8_t source_status;      // Used to indicate battery status, sync to optitrack, hardware failures (broken wire)
 
-/** Source State: \n Bit 1 == Phase modulation \n Bit 2 == Frequency tune \n Bit 3 == Current tune \n Bit 4 == Crosstalk calibration \n
- *  Bit 5 == Offset coil enabled */
-uint8_t source_state;       // on/off state for: Phase modulation, offset coil, data over B-field, (maybe also cross talk calibration, frequency tuning, current tuning)
+    /** Source State: \n Bit 1 == Phase modulation \n Bit 2 == Frequency tune \n Bit 3 == Current tune \n Bit 4 == Crosstalk calibration \n
+     *  Bit 5 == Offset coil enabled */
+    uint8_t source_state;       // on/off state for: Phase modulation, offset coil, data over B-field, (maybe also cross talk calibration, frequency tuning, current tuning)
 
-/** rssi */
-int8_t rssi;
+    /** rssi */
+    int8_t rssi;
 
-/** Frame ID */
-lib_AmfiProt_Amfitrack_FrameID_24b_t frame_id;
+    /** Frame ID */
+    lib_AmfiProt_Amfitrack_FrameID_24b_t frame_id;
 #if FIRMWARE_VERSION > 300
 
-/** X coil voltage */
-float voltage_coil_x_in_V;
+    /** X coil voltage */
+    float voltage_coil_x_in_V;
 
-/** Y coil voltage */
-float voltage_coil_y_in_V;
+    /** Y coil voltage */
+    float voltage_coil_y_in_V;
 
-/** Z coil voltage */
-float voltage_coil_z_in_V;
+    /** Z coil voltage */
+    float voltage_coil_z_in_V;
 
-/** Boost voltage */
-float voltage_boost_in_V;
+    /** Boost voltage */
+    float voltage_boost_in_V;
 #endif
 } lib_AmfiProt_Amfitrack_Source_Measurement_t;
 // static_assert(sizeof(lib_AmfiProt_Amfitrack_Source_Measurement_t) <= AmfiProtMaxPayloadLength, "lib_AmfiProt_Amfitrack_Source_Measurement_t larger than max payload size");
